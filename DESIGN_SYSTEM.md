@@ -267,10 +267,26 @@ conformed with no extra work. (Note: `init` in CLI v1.3 requires a design-system
 *preset*; we skip it and maintain `components.json` directly, since we override the
 generated theme anyway.)
 
+**Component edits applied (we own the source)**
+
+Two shadcn components were tweaked to match our design language; future re-adds would
+need re-applying (or upstreaming to our own variants):
+- `card.svelte` — swapped the faint `ring` for a real `border` (so it picks up the
+  contrast border) and added `shadow-md`.
+- `button.svelte` — added `shadow-xs` to the solid/outline/secondary/destructive
+  variants (not ghost/link), per the original soft/hard "buttons cast shadows" vision.
+
+**Load order & a deliberate cross-axis exception**
+
+Token files load primitives → semantic → themes → **modes last**. Modes load after
+themes so a *character* trait can intentionally override a *color* role: hard mode sets
+`--border: var(--fg)`, a high-contrast outline that resolves correctly in both light and
+dark. This is the one sanctioned place the two axes cross; keep it the exception.
+
 **Known gap (v1)**
 
-The `--border-width` axis (1px soft / 2px hard) applies to our own chrome and layout
-components, but shadcn components use Tailwind's fixed `border` utility (1px). Varying
-their border width per mode is deferred — radius, shadow, and font already carry the
-soft/hard distinction strongly. Revisit if the 2px hard border proves important.
+`--border-width` (1px soft / 2px hard) applies to our own chrome, but shadcn components
+use Tailwind's fixed `border` utility (1px) — so their hard-mode border is contrasting
+(color) but not thicker (width). Deferred; radius, shadow, font, and the contrast border
+already carry the soft/hard distinction strongly.
 ```

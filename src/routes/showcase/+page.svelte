@@ -193,7 +193,7 @@
 												</Dialog.Description>
 											</Dialog.Header>
 											<Dialog.Footer>
-												<Button>Got it</Button>
+												<Dialog.Close class={buttonVariants()}>Got it</Dialog.Close>
 											</Dialog.Footer>
 										</Dialog.Content>
 									</Dialog.Root>

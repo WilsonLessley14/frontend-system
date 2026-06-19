@@ -1,14 +1,17 @@
 @import 'tailwindcss';
 @import 'tw-animate-css';
 
-/* Design tokens — order matters: primitives first, then the semantic contract,
-   then the axis files that remap semantic roles. See DESIGN_SYSTEM.md §4. */
+/* Design tokens — order matters. Primitives, then the semantic contract, then the
+   color axis (themes), then the character axis (modes). Modes load LAST so that a
+   character trait may intentionally override a color role: hard mode sets a
+   high-contrast --border (= --fg) that must win over the theme's subtle border.
+   See DESIGN_SYSTEM.md §4, §11. */
 @import './lib/design/tokens/primitives.css';
 @import './lib/design/tokens/semantic.css';
-@import './lib/design/tokens/modes/soft.css';
-@import './lib/design/tokens/modes/hard.css';
 @import './lib/design/tokens/themes/light.css';
 @import './lib/design/tokens/themes/dark.css';
+@import './lib/design/tokens/modes/soft.css';
+@import './lib/design/tokens/modes/hard.css';
 
 /* Our color axis is driven by [data-theme], not the `.dark` class. Bind Tailwind's
    `dark:` variant to it so shadcn components' dark: utilities follow our theme. */
