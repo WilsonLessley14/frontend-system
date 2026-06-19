@@ -1,0 +1,13 @@
+/* Color axis — LIGHT. */
+[data-theme='light'] {
+	--surface: var(--gray-0);
+	--surface-raised: var(--gray-0);
+	--surface-sunken: var(--gray-50);
+	--fg: var(--gray-900);
+	--fg-muted: var(--gray-500);
+	--border: var(--gray-200);
+	--accent: var(--blue-600);
+	--accent-fg: var(--gray-0);
+	--danger: var(--red-600);
+	--danger-fg: var(--gray-0);
+}

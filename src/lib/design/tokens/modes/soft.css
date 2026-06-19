@@ -1,0 +1,12 @@
+/* Character axis — SOFT: rounded, fuzzy shadows, sans-serif, thin borders. */
+[data-mode='soft'] {
+	--radius: var(--rad-lg);
+	--radius-control: var(--rad-md);
+	--shadow: var(--shadow-soft-md);
+	--shadow-control: var(--shadow-soft-sm);
+	--font-body: var(--font-sans-stack);
+	--font-heading: var(--font-sans-stack);
+	--border-width: 1px;
+	--transition: 180ms cubic-bezier(0.4, 0, 0.2, 1);
+	--letter-spacing: 0;
+}

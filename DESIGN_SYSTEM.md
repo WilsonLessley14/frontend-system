@@ -235,4 +235,42 @@ deliberately deferred, not rejected.
 | Playground export format | **Full-file export** — simplest; workflow documented in §8 | Diff/patch export |
 | Color ramps | **Hand-picked** | Add a **color-picker Themes tab** in the playground to author themes (§8) |
 | Page-building agent manifest | **No manifest for now** — the agent reads component source directly | Generate a machine-readable manifest (JSON schema of components + allowed props + tokens consumed) once the component set stabilizes |
+
+## 11. shadcn-svelte integration (the conform bridge)
+
+The main shadcn-svelte suite is vendored under `src/lib/components/ui/` (we own the
+source). Rather than edit each component, we **conform** them with a single bridge in
+`src/app.css` so they inherit both axes automatically.
+
+**How it works**
+
+- `@theme inline { ... }` aliases every shadcn/Tailwind theme token onto our semantic
+  tokens — e.g. `--color-primary: var(--accent)`, `--radius-lg: var(--radius)`,
+  `--shadow-md: var(--shadow)`, `--font-sans: var(--font-body)`. Because `inline` makes
+  Tailwind emit the value directly, `bg-primary` compiles to
+  `background-color: var(--accent)` and `rounded-lg` to `border-radius: var(--radius)`.
+  Our axis files flip those underlying tokens, so the components retheme live.
+- `@custom-variant dark (&:is([data-theme='dark'] *))` binds Tailwind's `dark:` variant
+  to our `[data-theme]` attribute (shadcn defaults to a `.dark` class, which we don't use).
+
+**Naming rule (collision avoidance)**
+
+Tailwind v4 owns the `--radius-*`, `--font-sans`, and `--font-serif` theme namespaces.
+Our *primitives* therefore use distinct names — `--rad-*` and `--font-*-stack` — so they
+never shadow (or circularly reference) Tailwind's tokens. The bridge is the only place
+the two namespaces meet.
+
+**Updating / adding components**
+
+`npx shadcn-svelte@latest add <name>` drops new components in; the bridge keeps them
+conformed with no extra work. (Note: `init` in CLI v1.3 requires a design-system
+*preset*; we skip it and maintain `components.json` directly, since we override the
+generated theme anyway.)
+
+**Known gap (v1)**
+
+The `--border-width` axis (1px soft / 2px hard) applies to our own chrome and layout
+components, but shadcn components use Tailwind's fixed `border` utility (1px). Varying
+their border width per mode is deferred — radius, shadow, and font already carry the
+soft/hard distinction strongly. Revisit if the 2px hard border proves important.
 ```

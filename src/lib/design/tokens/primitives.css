@@ -1,0 +1,60 @@
+/* Tier 1 — Primitives. Raw scales, mode-agnostic. NEVER referenced by components.
+ *
+ * Note on naming: radius and font primitives are namespaced (--rad-*, --font-*-stack)
+ * to avoid colliding with Tailwind v4's own theme tokens (--radius-*, --font-sans,
+ * --font-serif). The Tailwind/shadcn theme tokens are remapped to our SEMANTIC tokens
+ * in app.css's @theme bridge, not here. */
+:root {
+	/* spacing scale */
+	--space-0: 0;
+	--space-1: 4px;
+	--space-2: 8px;
+	--space-3: 12px;
+	--space-4: 16px;
+	--space-5: 24px;
+	--space-6: 32px;
+	--space-8: 48px;
+	--space-10: 64px;
+
+	/* radius scale */
+	--rad-none: 0px;
+	--rad-sm: 4px;
+	--rad-md: 8px;
+	--rad-lg: 16px;
+	--rad-full: 9999px;
+
+	/* shadow scale */
+	--shadow-soft-sm: 0 2px 8px rgb(0 0 0 / 0.08);
+	--shadow-soft-md: 0 8px 24px rgb(0 0 0 / 0.12);
+	--shadow-hard-sm: 2px 2px 0 rgb(0 0 0 / 1);
+	--shadow-hard-md: 5px 5px 0 rgb(0 0 0 / 1);
+
+	/* font families */
+	--font-sans-stack: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+	--font-serif-stack: Georgia, 'Times New Roman', 'Iowan Old Style', serif;
+
+	/* neutral ramp */
+	--gray-0: #ffffff;
+	--gray-50: #f6f7f9;
+	--gray-100: #eceef1;
+	--gray-200: #dfe3e8;
+	--gray-300: #c5ccd4;
+	--gray-400: #9aa4b2;
+	--gray-500: #6b7685;
+	--gray-600: #4d5765;
+	--gray-700: #3a424e;
+	--gray-800: #262b33;
+	--gray-900: #15181d;
+	--gray-950: #0b0d10;
+
+	/* accent ramp */
+	--blue-400: #60a5fa;
+	--blue-500: #3b82f6;
+	--blue-600: #2563eb;
+	--blue-700: #1d4ed8;
+
+	/* danger ramp */
+	--red-400: #f87171;
+	--red-500: #ef4444;
+	--red-600: #dc2626;
+}

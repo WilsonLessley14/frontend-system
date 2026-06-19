@@ -1,0 +1,38 @@
+/* Tier 2 — Semantic role contract.
+ *
+ * These are the ONLY tokens components may reference (plus the shared --space-*).
+ * The values below are mode/theme-agnostic fallbacks; the real values are supplied
+ * by the axis files:
+ *   - character roles (--radius, --shadow, --font-body, --border-width, --transition)
+ *     come from tokens/modes/{soft,hard}.css   ([data-mode])
+ *   - color roles (--surface, --fg, --accent, --border, ...)
+ *     come from tokens/themes/{light,dark}.css ([data-theme])
+ *
+ * shadcn/Tailwind theme tokens (--color-primary, --radius-lg, --shadow-sm, ...) are
+ * aliased onto these roles in the app.css @theme bridge, so shadcn components inherit
+ * both axes automatically. Never let a component read a primitive directly.
+ */
+:root {
+	/* character (fallbacks; data-mode overrides) */
+	--radius: var(--rad-lg);
+	--radius-control: var(--rad-md);
+	--shadow: var(--shadow-soft-md);
+	--shadow-control: var(--shadow-soft-sm);
+	--font-body: var(--font-sans-stack);
+	--font-heading: var(--font-sans-stack);
+	--border-width: 1px;
+	--transition: 180ms cubic-bezier(0.4, 0, 0.2, 1);
+	--letter-spacing: 0;
+
+	/* color (fallbacks; data-theme overrides) */
+	--surface: var(--gray-0);
+	--surface-raised: var(--gray-0);
+	--surface-sunken: var(--gray-50);
+	--fg: var(--gray-900);
+	--fg-muted: var(--gray-500);
+	--border: var(--gray-200);
+	--accent: var(--blue-600);
+	--accent-fg: var(--gray-0);
+	--danger: var(--red-600);
+	--danger-fg: var(--gray-0);
+}

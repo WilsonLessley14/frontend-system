@@ -1,0 +1,12 @@
+/* Character axis — HARD: sharp corners, hard offset shadows, serif, thick borders. */
+[data-mode='hard'] {
+	--radius: var(--rad-none);
+	--radius-control: var(--rad-none);
+	--shadow: var(--shadow-hard-md);
+	--shadow-control: var(--shadow-hard-sm);
+	--font-body: var(--font-serif-stack);
+	--font-heading: var(--font-serif-stack);
+	--border-width: 2px;
+	--transition: 80ms steps(2, end);
+	--letter-spacing: 0.01em;
+}

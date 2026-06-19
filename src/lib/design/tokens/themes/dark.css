@@ -1,0 +1,13 @@
+/* Color axis — DARK. */
+[data-theme='dark'] {
+	--surface: var(--gray-950);
+	--surface-raised: var(--gray-900);
+	--surface-sunken: var(--gray-950);
+	--fg: var(--gray-50);
+	--fg-muted: var(--gray-400);
+	--border: var(--gray-800);
+	--accent: var(--blue-400);
+	--accent-fg: var(--gray-950);
+	--danger: var(--red-400);
+	--danger-fg: var(--gray-950);
+}
