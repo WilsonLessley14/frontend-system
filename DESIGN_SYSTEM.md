@@ -330,8 +330,17 @@ checked by `publint`.
 3. Set `data-mode` / `data-theme` on `<html>`.
 4. `import { Button } from '@wl/frontend-system';`
 
-**Nix (Phase 2, pending).** Flake exposes: a pinned devShell, the built package/tarball
-as `packages.default` (via `buildNpmPackage`), and `templates.consumer` pre-wired with the
-setup contract above. JS resolution still rides a normal dep (tarball/file); the flake
-pins it reproducibly in the consumer's `flake.lock`.
+**Nix (`flake.nix`).** The flake exposes:
+- `devShells.default` — pinned Node 22.
+- `packages.default` — `buildNpmPackage` that runs `npm run package` and outputs both
+  `dist/` and a `npm pack` tarball (`frontend-system.tgz`) in the store. `npmDepsHash` is
+  pinned; recompute after lockfile changes with
+  `nix run nixpkgs#prefetch-npm-deps -- package-lock.json`.
+- `templates.consumer` — `templates/consumer/`, a minimal SvelteKit app pre-wired with the
+  setup contract (`nix flake init -t github:WilsonLessley14/frontend-system#consumer`).
+
+Consumers add the design system as the flake input `frontend-system`; its devShell sets
+`$FRONTEND_SYSTEM_TGZ` to the pinned tarball, installed via `npm install "$FRONTEND_SYSTEM_TGZ"`.
+JS resolution rides a normal dep; the flake pins it reproducibly in the consumer's
+`flake.lock`. Bump with `nix flake update frontend-system` + reinstall the tarball.
 ```

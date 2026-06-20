@@ -1,0 +1,4 @@
+/* The setup contract: Tailwind first, then the design system's stylesheet.
+   The package ships @source so Tailwind scans its components for class usage. */
+@import 'tailwindcss';
+@import '@wl/frontend-system/styles.css';
