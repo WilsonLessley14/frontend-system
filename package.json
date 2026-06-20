@@ -1,13 +1,17 @@
 {
 	"name": "@wl/frontend-system",
-	"version": "0.1.0",
+	"version": "0.1.1",
 	"private": true,
 	"type": "module",
 	"description": "A soft/hard × light/dark token-driven Svelte design system on shadcn-svelte.",
-	"files": ["dist"],
+	"files": [
+		"dist"
+	],
 	"svelte": "./dist/index.js",
 	"types": "./dist/index.d.ts",
-	"sideEffects": ["**/*.css"],
+	"sideEffects": [
+		"**/*.css"
+	],
 	"exports": {
 		".": {
 			"types": "./dist/index.d.ts",

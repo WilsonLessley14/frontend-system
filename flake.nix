@@ -16,11 +16,11 @@
 
         frontend-system = pkgs.buildNpmPackage {
           pname = "frontend-system";
-          version = "0.1.0";
+          version = "0.1.1";
           src = ./.;
 
           # Recompute after lockfile changes: `nix run nixpkgs#prefetch-npm-deps -- package-lock.json`
-          npmDepsHash = "sha256-wmzde+Kzd3oh1n9qUrF4232jSlsbfLsQeSUzCG27od0=";
+          npmDepsHash = "sha256-AJg2xTddFSX5zQhuuzKms3EubdCUdUCVnxkfZBqI1z4=";
 
           # `npm run package` => svelte-kit sync && svelte-package && publint
           npmBuildScript = "package";
