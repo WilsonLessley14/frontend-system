@@ -1,7 +1,7 @@
 <script lang="ts">
-	import Stack from './layout/stack.svelte';
-	import Cluster from './layout/cluster.svelte';
-	import Grid from './layout/grid.svelte';
+	import Stack from '$lib/design/components/layout/stack.svelte';
+	import Cluster from '$lib/design/components/layout/cluster.svelte';
+	import Grid from '$lib/design/components/layout/grid.svelte';
 
 	import { Button, buttonVariants } from '$lib/components/ui/button';
 	import { Badge } from '$lib/components/ui/badge';

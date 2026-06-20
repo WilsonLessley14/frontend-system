@@ -1,9 +1,9 @@
 <script lang="ts">
-	import ModeControls from '$lib/design/components/mode-controls.svelte';
-	import SiteNav from '$lib/design/components/site-nav.svelte';
+	import ModeControls from '../_dev/mode-controls.svelte';
+	import SiteNav from '../_dev/site-nav.svelte';
 	import Container from '$lib/design/components/layout/container.svelte';
 	import Stack from '$lib/design/components/layout/stack.svelte';
-	import Preview from '$lib/design/components/preview.svelte';
+	import Preview from '../_dev/preview.svelte';
 </script>
 
 <header class="bar">

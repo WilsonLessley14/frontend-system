@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { axes } from '$lib/design/config/modes';
-	import { ui } from '$lib/design/mode.svelte';
+	import { ui } from './mode.svelte';
 </script>
 
 <div class="controls">

@@ -298,4 +298,40 @@ dark. This is the one sanctioned place the two axes cross; keep it the exception
 use Tailwind's fixed `border` utility (1px) — so their hard-mode border is contrasting
 (color) but not thicker (width). Deferred; radius, shadow, font, and the contrast border
 already carry the soft/hard distinction strongly.
+
+## 12. Distribution (consuming from other projects)
+
+**Model: installed package.** Because all customization flows through tokens, consumers
+don't fork components — they import them and retheme via tokens. (Decided over editable
+copy-in; see the eject escape hatch as a possible future.)
+
+**Boundary.** `src/lib` is the *publishable library*; `src/routes` is the *dev app* (the
+showcase/playground/theme-builder and their helpers in `src/routes/_dev/`). Nothing in
+`src/lib` may use SvelteKit-only imports (`$app/*`) — that keeps the package usable by
+plain Svelte+Vite consumers, not just SvelteKit.
+
+**Self-contained imports.** shadcn components ship importing `$lib/utils`, which assumes
+they live in the consumer's app. For packaging, every `$lib/…` import in `src/lib` was
+rewritten to a depth-correct relative path, so the built package resolves on its own.
+`src/routes` still uses `$lib` (correct for the dev app).
+
+**Public API.** `src/lib/index.ts` is the barrel: simple components (`Button`, `Input`,
+…), compositional namespaces (`Card`, `Dialog`, …), layout primitives (`Stack`,
+`Cluster`, `Grid`, `Container`), `cn`, the token config/manifests, and the pure
+`editor-format` helpers. `package.json` `exports` map: `.` → the barrel, `./styles.css` →
+the token + bridge stylesheet. Built with `svelte-package` (`npm run package` → `dist/`),
+checked by `publint`.
+
+**Consumer setup contract** (ships via the flake template in Phase 2):
+1. Install the package + peers: `svelte` 5, `tailwindcss` 4, `bits-ui`, `tailwind-variants`,
+   `clsx`, `tailwind-merge`, `@lucide/svelte`, `tw-animate-css`.
+2. In the Tailwind entry: `@import 'tailwindcss';` then `@import '@wl/frontend-system/styles.css';`
+   (the package ships `@source` so Tailwind scans its components).
+3. Set `data-mode` / `data-theme` on `<html>`.
+4. `import { Button } from '@wl/frontend-system';`
+
+**Nix (Phase 2, pending).** Flake exposes: a pinned devShell, the built package/tarball
+as `packages.default` (via `buildNpmPackage`), and `templates.consumer` pre-wired with the
+setup contract above. JS resolution still rides a normal dep (tarball/file); the flake
+pins it reproducibly in the consumer's `flake.lock`.
 ```

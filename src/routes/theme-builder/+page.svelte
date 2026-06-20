@@ -2,11 +2,11 @@
 	import { browser } from '$app/environment';
 	import Container from '$lib/design/components/layout/container.svelte';
 	import Stack from '$lib/design/components/layout/stack.svelte';
-	import Preview from '$lib/design/components/preview.svelte';
-	import SiteNav from '$lib/design/components/site-nav.svelte';
-	import ModeControls from '$lib/design/components/mode-controls.svelte';
+	import Preview from '../_dev/preview.svelte';
+	import SiteNav from '../_dev/site-nav.svelte';
+	import ModeControls from '../_dev/mode-controls.svelte';
 	import { Button } from '$lib/components/ui/button';
-	import { ui } from '$lib/design/mode.svelte';
+	import { ui } from '../_dev/mode.svelte';
 	import { colorRoles, type Theme } from '$lib/design/config/tokens';
 	import {
 		editor,
@@ -17,7 +17,7 @@
 		exportTheme,
 		resetColor,
 		hydrate
-	} from '$lib/design/editor.svelte';
+	} from '../_dev/editor.svelte';
 
 	if (browser) hydrate();
 

@@ -1,4 +1,4 @@
-import { axes } from './config/modes';
+import { axes } from '$lib/design/config/modes';
 
 /**
  * Shared, reactive UI mode state. Keyed by axis name (see config/modes.ts).

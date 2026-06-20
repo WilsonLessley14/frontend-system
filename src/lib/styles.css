@@ -1,0 +1,86 @@
+/* frontend-system — consumer stylesheet.
+ *
+ * Usage in a consuming project's Tailwind entry (after Tailwind itself):
+ *
+ *   @import 'tailwindcss';
+ *   @import '@wl/frontend-system/styles.css';
+ *
+ * This file ships the design tokens, the shadcn→token @theme bridge, and a
+ * @source directive so Tailwind scans the packaged components for class usage.
+ * It intentionally does NOT import 'tailwindcss' — the consumer owns that.
+ */
+
+@import 'tw-animate-css';
+
+@import './design/tokens/primitives.css';
+@import './design/tokens/semantic.css';
+@import './design/tokens/themes/light.css';
+@import './design/tokens/themes/dark.css';
+@import './design/tokens/modes/soft.css';
+@import './design/tokens/modes/hard.css';
+
+/* Tailwind ignores node_modules by default; register this package's own files
+   (relative to this stylesheet) so the components' utility classes are generated. */
+@source '.';
+
+/* Color axis is driven by [data-theme]; bind Tailwind's dark: variant to it. */
+@custom-variant dark (&:is([data-theme='dark'] *));
+
+/* Conform bridge: shadcn/Tailwind tokens → our semantic tokens (see DESIGN_SYSTEM.md §11). */
+@theme inline {
+	--radius-xs: var(--radius-control);
+	--radius-sm: var(--radius-control);
+	--radius-md: var(--radius-control);
+	--radius-lg: var(--radius);
+	--radius-xl: var(--radius);
+	--radius-2xl: var(--radius);
+
+	--shadow-2xs: var(--shadow-control);
+	--shadow-xs: var(--shadow-control);
+	--shadow-sm: var(--shadow-control);
+	--shadow-md: var(--shadow);
+	--shadow-lg: var(--shadow);
+	--shadow-xl: var(--shadow);
+
+	--font-sans: var(--font-body);
+	--font-serif: var(--font-serif-stack);
+
+	--color-background: var(--surface);
+	--color-foreground: var(--fg);
+	--color-card: var(--surface-raised);
+	--color-card-foreground: var(--fg);
+	--color-popover: var(--surface-raised);
+	--color-popover-foreground: var(--fg);
+	--color-primary: var(--accent);
+	--color-primary-foreground: var(--accent-fg);
+	--color-secondary: var(--surface-sunken);
+	--color-secondary-foreground: var(--fg);
+	--color-muted: var(--surface-sunken);
+	--color-muted-foreground: var(--fg-muted);
+	--color-accent: var(--surface-sunken);
+	--color-accent-foreground: var(--fg);
+	--color-destructive: var(--danger);
+	--color-destructive-foreground: var(--danger-fg);
+	--color-border: var(--border);
+	--color-input: var(--border);
+	--color-ring: var(--accent);
+}
+
+@layer base {
+	*,
+	*::before,
+	*::after {
+		box-sizing: border-box;
+		border-color: var(--color-border);
+	}
+
+	html,
+	body {
+		margin: 0;
+		min-height: 100%;
+		background: var(--surface);
+		color: var(--fg);
+		font-family: var(--font-body);
+		transition: var(--transition);
+	}
+}

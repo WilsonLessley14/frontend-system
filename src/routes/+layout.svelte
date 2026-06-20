@@ -3,7 +3,7 @@
 	import type { Snippet } from 'svelte';
 	import { browser } from '$app/environment';
 	import { axes } from '$lib/design/config/modes';
-	import { ui } from '$lib/design/mode.svelte';
+	import { ui } from './_dev/mode.svelte';
 
 	let { children }: { children: Snippet } = $props();
 

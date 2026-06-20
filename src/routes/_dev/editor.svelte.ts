@@ -3,13 +3,13 @@ import {
 	colorRoles,
 	type Mode,
 	type Theme
-} from './config/tokens';
+} from '$lib/design/config/tokens';
 import {
 	tokenToCss,
 	generateModeCss,
 	generateThemeCss,
 	type TokenValue
-} from './editor-format';
+} from '$lib/design/editor-format';
 
 type CharMap = Record<string, TokenValue>;
 type ColorMap = Record<string, string>;
