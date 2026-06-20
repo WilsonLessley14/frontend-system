@@ -185,33 +185,42 @@ never sit next to each other in real use.
 - A separate **Compare** view (opt-in) renders the 2×2 grid side-by-side for spot-checking
   a single component for drift — not the default, used only when hunting inconsistency.
 
-## 8. Playground contract
+## 8. Editor routes — `/playground` & `/theme-builder`
 
-Purpose: tweak the system live, without code changes — and have that produce committable config.
+The "tweak live, produce committable config" goal is split across two routes, one per
+axis. Both render the **shared `Preview`** component (`components/preview.svelte`, the
+same catalog `/showcase` uses) beside a control panel, write overrides live to
+`document.documentElement`, persist to `localStorage`, and emit full-file exports.
 
-- A `<ModeControls>` panel binds inputs to `data-mode`, `data-theme`, and individual
-  `--token` overrides written live to `document.documentElement`.
-- State persists to `localStorage` so a session survives reload.
-- The panel's controls are **generated from `config/modes.ts`** — adding a new token to
-  the manifest makes a new control appear automatically, no playground edits.
-- An **Export** button serializes the current variable set back into `modes/*.css` +
-  `config/*.ts` form. Playing around *produces* the config you commit — closes the loop.
-- A **Themes** tab (planned) with a color picker for hand-building new color themes,
-  exporting them as `themes/*.css` files. See §5 decision on color ramps.
+| Route | Axis | Edits | Controls source | Exports |
+|-------|------|-------|-----------------|---------|
+| `/playground` | Character (feel) | `--radius`, `--shadow*`, `--font-*`, `--border-width`, `--transition`, `--letter-spacing` | `characterTokens` in `config/tokens.ts` | `modes/soft.css`, `modes/hard.css` |
+| `/theme-builder` | Color (look) | the semantic color roles, picked per role | `colorRoles` in `config/tokens.ts` | `themes/light.css`, `themes/dark.css` |
+
+- **Axis selection reuses `<ModeControls>`**: in `/playground` the Character toggle picks
+  *which mode you edit*; in `/theme-builder` the Color toggle picks *which theme you edit*.
+  The other axis just changes what the preview shows.
+- **Manifest-driven**: controls are generated from the typed manifests in
+  `config/tokens.ts`, so adding a token/role surfaces a new control automatically.
+- **Live apply is route-scoped**: overrides are written to `<html>` while you're on the
+  editor and cleared on navigate away, so `/showcase` always reflects committed CSS. The
+  edits themselves persist in `localStorage`.
+- **Pure core / thin shell**: serialization lives in `editor-format.ts` (pure, testable);
+  DOM/storage/export wiring in `editor.svelte.ts`.
 
 ### Export workflow (full-file)
 
 The v1 export is intentionally dumb: it writes whole files, you overwrite and commit.
 
-1. In `/playground`, tweak modes/themes/tokens until the preview looks right.
-2. Click **Export**. The panel emits complete file contents for each changed file
-   (e.g. the full `modes/soft.css`, not a diff).
-3. Copy each emitted file's contents over the corresponding file in
-   `src/lib/design/tokens/`.
-4. Reload `/showcase` to confirm, then commit the changed token files.
+1. In the editor, tweak until the preview looks right.
+2. Click **Export**. The panel emits the complete file contents (e.g. the full
+   `modes/soft.css`), with the target path shown above it.
+3. Copy it over the corresponding file in `src/lib/design/tokens/`.
+4. Reload `/showcase` to confirm, then commit the changed token file.
 
-No patching, no merge step — the exported file *is* the new source of truth for that
-token group. (A diff/patch export is a possible future upgrade; see §10.)
+No patching, no merge step — the exported file *is* the new source of truth. Exports emit
+literal resolved values (e.g. `16px`, `#2563eb`) rather than primitive refs; the primitive
+scale remains an optional palette. (Diff/patch export is a possible future upgrade; §10.)
 
 ## 9. Tech stack
 
