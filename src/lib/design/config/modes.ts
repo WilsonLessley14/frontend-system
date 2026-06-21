@@ -3,6 +3,8 @@
  * the showcase/playground controls are generated from — add an axis here and a new
  * control appears automatically, with no UI changes. See DESIGN_SYSTEM.md §3, §8.
  */
+import { themeNames } from './tokens';
+
 export type Axis = {
 	/** the `data-*` attribute set on <html> */
 	attribute: string;
@@ -24,8 +26,8 @@ export const axes = {
 	theme: {
 		attribute: 'data-theme',
 		label: 'Color',
-		values: ['light', 'dark'],
-		default: 'light'
+		values: themeNames,
+		default: themeNames[0]
 	}
 } satisfies Record<string, Axis>;
 

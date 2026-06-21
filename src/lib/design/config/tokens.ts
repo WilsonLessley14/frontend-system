@@ -7,7 +7,9 @@ import type { TokenValue } from '../editor-format';
  */
 
 export type Mode = 'soft' | 'hard';
-export type Theme = 'light' | 'dark';
+/** Theme names are an open set — see `themes` below. */
+export type ThemeName = string;
+export type Theme = ThemeName; // back-compat alias
 
 export type CharacterTokenDef = {
 	name: string; // CSS custom property, e.g. "--radius"
@@ -19,12 +21,15 @@ export type CharacterTokenDef = {
 	defaults: Record<Mode, TokenValue>;
 };
 
+/** A color role is theme-agnostic; its value per theme lives in `themes`. */
 export type ColorRoleDef = {
 	name: string; // e.g. "--surface"
 	label: string;
 	hint?: string;
-	defaults: Record<Theme, string>; // hex per theme
 };
+
+/** A theme maps every color role name → hex. */
+export type ColorTheme = Record<string, string>;
 
 export const FONT_PRESETS: { label: string; value: string }[] = [
 	{ label: 'Sans', value: 'ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif' },
@@ -133,14 +138,61 @@ export const characterTokens: CharacterTokenDef[] = [
 ];
 
 export const colorRoles: ColorRoleDef[] = [
-	{ name: '--surface', label: 'Surface', hint: 'Page background', defaults: { light: '#ffffff', dark: '#0b0d10' } },
-	{ name: '--surface-raised', label: 'Surface raised', hint: 'Cards, popovers', defaults: { light: '#ffffff', dark: '#15181d' } },
-	{ name: '--surface-sunken', label: 'Surface sunken', hint: 'Muted areas', defaults: { light: '#f6f7f9', dark: '#0b0d10' } },
-	{ name: '--fg', label: 'Foreground', hint: 'Primary text', defaults: { light: '#15181d', dark: '#f6f7f9' } },
-	{ name: '--fg-muted', label: 'Foreground muted', hint: 'Secondary text', defaults: { light: '#6b7685', dark: '#9aa4b2' } },
-	{ name: '--border', label: 'Border', hint: 'Soft mode border', defaults: { light: '#dfe3e8', dark: '#262b33' } },
-	{ name: '--accent', label: 'Accent', hint: 'Primary actions', defaults: { light: '#2563eb', dark: '#60a5fa' } },
-	{ name: '--accent-fg', label: 'Accent foreground', hint: 'Text on accent', defaults: { light: '#ffffff', dark: '#0b0d10' } },
-	{ name: '--danger', label: 'Danger', hint: 'Destructive actions', defaults: { light: '#dc2626', dark: '#f87171' } },
-	{ name: '--danger-fg', label: 'Danger foreground', hint: 'Text on danger', defaults: { light: '#ffffff', dark: '#0b0d10' } }
+	{ name: '--surface', label: 'Surface', hint: 'Page background' },
+	{ name: '--surface-raised', label: 'Surface raised', hint: 'Cards, popovers' },
+	{ name: '--surface-sunken', label: 'Surface sunken', hint: 'Muted areas' },
+	{ name: '--fg', label: 'Foreground', hint: 'Primary text' },
+	{ name: '--fg-muted', label: 'Foreground muted', hint: 'Secondary text' },
+	{ name: '--border', label: 'Border', hint: 'Soft-mode border' },
+	{ name: '--accent', label: 'Accent', hint: 'Primary actions' },
+	{ name: '--accent-fg', label: 'Accent foreground', hint: 'Text on accent' },
+	{ name: '--danger', label: 'Danger', hint: 'Destructive actions' },
+	{ name: '--danger-fg', label: 'Danger foreground', hint: 'Text on danger' }
 ];
+
+/**
+ * The named theme set (the data-theme axis). Each theme provides a hex for every
+ * color role. To ADD a theme: add an entry here, create tokens/themes/<name>.css
+ * with a [data-theme='<name>'] block, and @import it in styles.css. The theme-builder
+ * can draft new themes live; export + commit them via those three steps.
+ */
+export const themes: Record<string, ColorTheme> = {
+	light: {
+		'--surface': '#ffffff',
+		'--surface-raised': '#ffffff',
+		'--surface-sunken': '#f6f7f9',
+		'--fg': '#15181d',
+		'--fg-muted': '#6b7685',
+		'--border': '#dfe3e8',
+		'--accent': '#2563eb',
+		'--accent-fg': '#ffffff',
+		'--danger': '#dc2626',
+		'--danger-fg': '#ffffff'
+	},
+	dark: {
+		'--surface': '#0b0d10',
+		'--surface-raised': '#15181d',
+		'--surface-sunken': '#0b0d10',
+		'--fg': '#f6f7f9',
+		'--fg-muted': '#9aa4b2',
+		'--border': '#262b33',
+		'--accent': '#60a5fa',
+		'--accent-fg': '#0b0d10',
+		'--danger': '#f87171',
+		'--danger-fg': '#0b0d10'
+	},
+	pink: {
+		'--surface': '#dfb9b9',
+		'--surface-raised': '#b98383',
+		'--surface-sunken': '#cb94cc',
+		'--fg': '#000000',
+		'--fg-muted': '#30353b',
+		'--border': '#9567a2',
+		'--accent': '#732cc9',
+		'--accent-fg': '#ffffff',
+		'--danger': '#de4a85',
+		'--danger-fg': '#be55b0'
+	}
+};
+
+export const themeNames: string[] = Object.keys(themes);

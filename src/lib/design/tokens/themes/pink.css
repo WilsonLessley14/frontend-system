@@ -1,0 +1,13 @@
+/* Color axis — pink! */
+[data-theme='pink'] {
+	--surface: #dfb9b9;
+	--surface-raised: #b98383;
+	--surface-sunken: #cb94cc;
+	--fg: #000000;
+	--fg-muted: #30353b;
+	--border: #9567a2;
+	--accent: #732cc9;
+	--accent-fg: #ffffff;
+	--danger: #de4a85;
+	--danger-fg: #be55b0;
+}

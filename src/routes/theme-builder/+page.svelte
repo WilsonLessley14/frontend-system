@@ -4,10 +4,9 @@
 	import Stack from '$lib/design/components/layout/stack.svelte';
 	import Preview from '../_dev/preview.svelte';
 	import SiteNav from '../_dev/site-nav.svelte';
-	import ModeControls from '../_dev/mode-controls.svelte';
 	import { Button } from '$lib/components/ui/button';
 	import { ui } from '../_dev/mode.svelte';
-	import { colorRoles, type Theme } from '$lib/design/config/tokens';
+	import { colorRoles } from '$lib/design/config/tokens';
 	import {
 		editor,
 		applyColor,
@@ -16,12 +15,21 @@
 		persist,
 		exportTheme,
 		resetColor,
+		addTheme,
 		hydrate
 	} from '../_dev/editor.svelte';
 
 	if (browser) hydrate();
 
-	const theme = $derived(ui.theme as Theme);
+	const theme = $derived(ui.theme);
+	let newName = $state('');
+
+	function createTheme() {
+		if (addTheme(newName, theme)) {
+			ui.theme = newName.trim();
+			newName = '';
+		}
+	}
 
 	let exported = $state('');
 	let copied = $state(false);
@@ -50,7 +58,26 @@
 				<strong class="brand">frontend-system</strong>
 				<SiteNav />
 			</div>
-			<ModeControls />
+			<div class="theme-bar">
+				<label class="seg">
+					Theme
+					<select bind:value={ui.theme}>
+						{#each editor.themeNames as t (t)}
+							<option value={t}>{t}</option>
+						{/each}
+					</select>
+				</label>
+				<input
+					class="new"
+					placeholder="new theme name"
+					bind:value={newName}
+					onkeydown={(e) => e.key === 'Enter' && createTheme()}
+				/>
+				<Button size="sm" variant="outline" onclick={createTheme}>+ New</Button>
+				<Button size="sm" variant="ghost" onclick={() => (ui.mode = ui.mode === 'soft' ? 'hard' : 'soft')}>
+					{ui.mode}
+				</Button>
+			</div>
 		</div>
 	</Container>
 </header>
@@ -63,8 +90,9 @@
 					<div>
 						<h1 class="title">Theme Builder</h1>
 						<p class="sub">
-							Editing the <strong>{theme}</strong> color roles. Use the Color toggle above to switch
-							which theme you're editing; Character just changes the preview mode.
+							Editing the <strong>{theme}</strong> color roles. Pick a theme or create a new one
+							(seeded from the current one) in the bar above; the <em>{ui.mode}</em> button previews
+							character. New themes are live drafts — export and commit them to persist.
 						</p>
 					</div>
 
@@ -143,6 +171,31 @@
 	.brand {
 		font-family: var(--font-heading);
 		font-size: 1.1rem;
+	}
+	.theme-bar {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: var(--space-2);
+	}
+	.theme-bar .seg {
+		display: flex;
+		align-items: center;
+		gap: var(--space-1);
+		font-size: 0.75rem;
+		color: var(--fg-muted);
+	}
+	.theme-bar select,
+	.theme-bar .new {
+		font-family: var(--font-body);
+		background: var(--surface);
+		color: var(--fg);
+		border: var(--border-width) solid var(--border);
+		border-radius: var(--radius-control);
+		padding: var(--space-1) var(--space-2);
+	}
+	.theme-bar .new {
+		width: 10rem;
 	}
 	main {
 		padding-block: var(--space-6) var(--space-10);

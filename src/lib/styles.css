@@ -16,6 +16,7 @@
 @import './design/tokens/semantic.css';
 @import './design/tokens/themes/light.css';
 @import './design/tokens/themes/dark.css';
+@import './design/tokens/themes/pink.css';
 @import './design/tokens/modes/soft.css';
 @import './design/tokens/modes/hard.css';
 

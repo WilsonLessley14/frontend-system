@@ -195,13 +195,28 @@ same catalog `/showcase` uses) beside a control panel, write overrides live to
 | Route | Axis | Edits | Controls source | Exports |
 |-------|------|-------|-----------------|---------|
 | `/playground` | Character (feel) | `--radius`, `--shadow*`, `--font-*`, `--border-width`, `--transition`, `--letter-spacing` | `characterTokens` in `config/tokens.ts` | `modes/soft.css`, `modes/hard.css` |
-| `/theme-builder` | Color (look) | the semantic color roles, picked per role | `colorRoles` in `config/tokens.ts` | `themes/light.css`, `themes/dark.css` |
+| `/theme-builder` | Color (look) | the semantic color roles of any named theme | `colorRoles` + `themes` in `config/tokens.ts` | `themes/<name>.css` |
 
-- **Axis selection reuses `<ModeControls>`**: in `/playground` the Character toggle picks
-  *which mode you edit*; in `/theme-builder` the Color toggle picks *which theme you edit*.
-  The other axis just changes what the preview shows.
+- **Named theme set**: the color axis is an **open set** of named themes (`themes` in
+  `config/tokens.ts`; `themeNames` drives the `data-theme` axis values). `/theme-builder`
+  lets you edit any existing theme **or draft a new named one** (seeded from the current
+  theme). Drafts are live-only until exported and committed.
+- **Axis selection**: `/playground` uses `<ModeControls>` (Character toggle picks the mode
+  you edit). `/theme-builder` has its own theme `<select>` + "New" creator, plus a
+  soft/hard button to preview character.
 - **Manifest-driven**: controls are generated from the typed manifests in
   `config/tokens.ts`, so adding a token/role surfaces a new control automatically.
+
+### Adding a theme (3 steps)
+
+The set is intentionally explicit — a draft from the builder becomes a real theme by:
+
+1. add its values to the `themes` registry in `config/tokens.ts`,
+2. create `tokens/themes/<name>.css` with a `[data-theme='<name>']` block (paste the export),
+3. `@import` it in `styles.css`.
+
+That's it — `themeNames` (and thus the `data-theme` axis + every consumer of `styles.css`)
+picks it up automatically. `light`, `dark`, and `pink` ship this way.
 - **Live apply is route-scoped**: overrides are written to `<html>` while you're on the
   editor and cleared on navigate away, so `/showcase` always reflects committed CSS. The
   edits themselves persist in `localStorage`.

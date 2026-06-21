@@ -2,6 +2,7 @@
 	import Stack from '$lib/design/components/layout/stack.svelte';
 	import Cluster from '$lib/design/components/layout/cluster.svelte';
 	import Grid from '$lib/design/components/layout/grid.svelte';
+	import Text from '$lib/design/components/typography/text.svelte';
 
 	import { Button, buttonVariants } from '$lib/components/ui/button';
 	import { Badge } from '$lib/components/ui/badge';
@@ -31,6 +32,31 @@
 </script>
 
 <Stack gap="10">
+	<!-- Typography -->
+	<section>
+		<Stack gap="4">
+			<h2 class="section-title">Typography</h2>
+			<Card.Root>
+				<Card.Content>
+					<Stack gap="3">
+						<Text variant="heading" size="4xl">Heading 4xl</Text>
+						<Text variant="heading" size="2xl">Heading 2xl</Text>
+						<Text variant="body">Body — the default paragraph text in the active mode's font.</Text>
+						<Text variant="caption" tone="muted">Caption — muted secondary text.</Text>
+						<Text variant="label">Label</Text>
+						<Cluster gap="4">
+							<Text tone="default">Default</Text>
+							<Text tone="muted">Muted</Text>
+							<Text tone="accent">Accent</Text>
+							<Text tone="danger">Danger</Text>
+						</Cluster>
+						<Text italic>Italic body text.</Text>
+					</Stack>
+				</Card.Content>
+			</Card.Root>
+		</Stack>
+	</section>
+
 	<!-- Buttons & badges -->
 	<section>
 		<Stack gap="4">
