@@ -40,6 +40,16 @@ export { default as Cluster } from './design/components/layout/cluster.svelte';
 export { default as Grid } from './design/components/layout/grid.svelte';
 export { default as Container } from './design/components/layout/container.svelte';
 
+// ── Typography ────────────────────────────────────────────────────────────────
+export { default as Text } from './design/components/typography/text.svelte';
+export type {
+	TextVariant,
+	TextTone,
+	TextSize,
+	TextWeight,
+	TextAlign
+} from './design/components/typography/types';
+
 // ── Utilities ─────────────────────────────────────────────────────────────────
 export { cn, type WithElementRef, type WithoutChild, type WithoutChildren, type WithoutChildrenOrChild } from './utils';
 
