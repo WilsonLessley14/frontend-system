@@ -87,6 +87,34 @@ Peer deps the consumer needs: `svelte` 5, `tailwindcss` 4, `bits-ui`, `tailwind-
 Everything is pinned in the consumer's `flake.lock`; bump with
 `nix flake update frontend-system` then reinstall the tarball.
 
+## Releasing an update (maintainer)
+
+After changing a component or token, publish a new version:
+
+1. **Bump the version** in `package.json` (and the matching `version` field in `flake.nix`).
+2. **Sync the lockfile** — `npm install` (a version bump always rewrites `package-lock.json`).
+3. **Recompute the deps hash** — because the lockfile changed, the flake's pinned
+   `npmDepsHash` is now stale. Get the new one and paste it into `flake.nix`:
+   ```sh
+   nix run nixpkgs#prefetch-npm-deps -- package-lock.json
+   ```
+   (Skip this only if `package-lock.json` is unchanged — e.g. a component-only edit with
+   no version bump. A stale hash makes `nix build` fail with the correct hash, so it's
+   self-correcting either way.)
+4. **Verify** — `nix build .#frontend-system` (runs `svelte-package` + `publint`).
+5. **Commit & push** — `git commit -am "release: vX.Y.Z" && git push origin main`.
+
+Consumers then pull it with `nix flake update frontend-system` + reinstall (see above).
+
+**Nice shortcut.** Steps 1–4 are mechanical (and the hash recompute is easy to forget), so:
+
+```sh
+npm run release -- patch        # or: minor | major | 1.2.3
+```
+
+bumps the version, syncs `flake.nix`, recomputes `npmDepsHash`, and verifies the build —
+then prints the `git commit` / `git push` to run. The publish itself stays in your hands.
+
 ## Theming
 
 Don't edit components — customize through tokens:
