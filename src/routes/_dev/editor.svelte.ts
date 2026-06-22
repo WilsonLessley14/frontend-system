@@ -80,6 +80,20 @@ export function removeTheme(name: string): boolean {
 	return true;
 }
 
+function randomHex(): string {
+	return '#' + Math.floor(Math.random() * 0x1000000).toString(16).padStart(6, '0');
+}
+
+/** Scramble a draft's working colors to random hex. Committed themes are protected. */
+export function randomizeColors(name: string): boolean {
+	const entry = editor.themeSet[name];
+	if (!entry || entry.kind === 'committed') return false;
+	const next: ColorMap = {};
+	for (const r of colorRoles) next[r.name] = randomHex();
+	editor.color[name] = next;
+	return true;
+}
+
 // ── Imperative shell: DOM + storage ──────────────────────────────────────────
 
 export function applyCharacter(mode: Mode): void {

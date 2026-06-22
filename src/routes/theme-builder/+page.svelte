@@ -14,6 +14,7 @@
 		resetColor,
 		addTheme,
 		removeTheme,
+		randomizeColors,
 		isTemporary
 	} from '../_dev/editor.svelte';
 
@@ -107,6 +108,9 @@
 					<div class="actions">
 						<Button onclick={doExport}>Export {theme}.css</Button>
 						<Button variant="outline" onclick={() => resetColor(theme)}>Reset {theme}</Button>
+						{#if isTemporary(theme)}
+							<Button variant="secondary" onclick={() => randomizeColors(theme)}>🎲 Randomize</Button>
+						{/if}
 					</div>
 
 					{#if exported}

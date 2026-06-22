@@ -212,9 +212,10 @@ same catalog `/showcase` uses) beside a control panel, write overrides live to
   discriminated union in the editor — `themeSet: Record<name, CommittedTheme | TemporaryTheme>`
   (same shape, distinct `kind`; each carries its reset `base`). `themeNames` drives the
   `data-theme` axis. `/theme-builder` edits any theme **or drafts a new one** ("+ New",
-  seeded from the current theme); drafts (`kind: 'temporary'`) can be **Deleted**, committed
-  themes can't (the type guard in `removeTheme` rejects them). Drafts are live-only until
-  exported and committed.
+  seeded from the current theme); drafts (`kind: 'temporary'`) can be **Randomized**
+  (scramble every role to random hex) or **Deleted** — committed themes can't be (the same
+  `kind` type guard rejects them in `randomizeColors`/`removeTheme`). Drafts are live-only
+  until exported and committed.
 - **Axis selection**: both editors use the shared `<ModeControls>` in a shared `<AppHeader>`,
   rendering Character and Color as matching dropdowns (`Select`). `/theme-builder` adds a
   new-theme `Input` + "New" / "Delete".
