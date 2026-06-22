@@ -46,7 +46,9 @@
 	.right {
 		display: flex;
 		flex-wrap: wrap;
-		align-items: center;
+		/* bottom-align so label-less controls (e.g. the new-theme input) sit on the
+		   same baseline as labelled dropdowns, without a placeholder label. */
+		align-items: flex-end;
 		gap: var(--space-4);
 	}
 	:global(.brand) {
