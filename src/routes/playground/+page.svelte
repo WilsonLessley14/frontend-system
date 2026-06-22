@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { browser } from '$app/environment';
 	import Container from '$lib/design/components/layout/container.svelte';
 	import Stack from '$lib/design/components/layout/stack.svelte';
 	import Preview from '../_dev/preview.svelte';
@@ -8,18 +7,7 @@
 	import { Button } from '$lib/components/ui/button';
 	import { ui } from '../_dev/mode.svelte';
 	import { characterTokens, FONT_PRESETS, EASING_PRESETS, type Mode } from '$lib/design/config/tokens';
-	import {
-		editor,
-		applyCharacter,
-		clearInline,
-		characterNames,
-		persist,
-		exportMode,
-		resetCharacter,
-		hydrate
-	} from '../_dev/editor.svelte';
-
-	if (browser) hydrate();
+	import { editor, exportMode, resetCharacter } from '../_dev/editor.svelte';
 
 	const mode = $derived(ui.mode as Mode);
 
@@ -28,12 +16,8 @@
 
 	const shadowKeys = ['x', 'y', 'blur', 'spread'] as const;
 
-	// Apply this mode's character overrides live while on the page; clear on leave.
-	$effect(() => {
-		applyCharacter(mode);
-		persist();
-		return () => clearInline(characterNames);
-	});
+	// Live application + persistence is handled centrally in the root layout, so
+	// editing tokens here reflects on every route.
 
 	function doExport() {
 		exported = exportMode(mode);

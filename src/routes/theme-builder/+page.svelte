@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { browser } from '$app/environment';
 	import Container from '$lib/design/components/layout/container.svelte';
 	import Stack from '$lib/design/components/layout/stack.svelte';
 	import Preview from '../_dev/preview.svelte';
@@ -11,19 +10,12 @@
 	import { colorRoles } from '$lib/design/config/tokens';
 	import {
 		editor,
-		applyColor,
-		clearInline,
-		colorNames,
-		persist,
 		exportTheme,
 		resetColor,
 		addTheme,
 		removeTheme,
-		isTemporary,
-		hydrate
+		isTemporary
 	} from '../_dev/editor.svelte';
-
-	if (browser) hydrate();
 
 	const theme = $derived(ui.theme);
 	let newName = $state('');
@@ -44,11 +36,7 @@
 	let exported = $state('');
 	let copied = $state(false);
 
-	$effect(() => {
-		applyColor(theme);
-		persist();
-		return () => clearInline(colorNames);
-	});
+	// Live application + persistence is handled centrally in the root layout.
 
 	function doExport() {
 		exported = exportTheme(theme);
