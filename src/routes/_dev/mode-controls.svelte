@@ -1,19 +1,26 @@
 <script lang="ts">
 	import { axes } from '$lib/design/config/modes';
 	import { ui } from './mode.svelte';
+	import { editor } from './editor.svelte';
+	import * as Select from '$lib/components/ui/select';
+
+	// The theme axis is the open named set (incl. live drafts); other axes are fixed.
+	const themeOptions = $derived(editor.themeNames);
 </script>
 
 <div class="controls">
 	{#each Object.entries(axes) as [name, axis] (name)}
 		<div class="group">
 			<span class="label">{axis.label}</span>
-			{#if axis.values.length > 2}
-				<!-- many values (e.g. the theme set) → dropdown -->
-				<select class="dropdown" aria-label={axis.label} bind:value={ui[name]}>
-					{#each axis.values as value (value)}
-						<option {value}>{value}</option>
-					{/each}
-				</select>
+			{#if name === 'theme'}
+				<Select.Root type="single" bind:value={ui[name]}>
+					<Select.Trigger class="min-w-28 capitalize">{ui[name]}</Select.Trigger>
+					<Select.Content>
+						{#each themeOptions as value (value)}
+							<Select.Item {value} label={value} class="capitalize">{value}</Select.Item>
+						{/each}
+					</Select.Content>
+				</Select.Root>
 			{:else}
 				<div class="seg" role="group" aria-label={axis.label}>
 					{#each axis.values as value (value)}
@@ -36,6 +43,7 @@
 	.controls {
 		display: flex;
 		flex-wrap: wrap;
+		align-items: flex-end;
 		gap: var(--space-5);
 	}
 	.group {
@@ -68,15 +76,5 @@
 	.opt[data-active='true'] {
 		background: var(--accent);
 		color: var(--accent-fg);
-	}
-	.dropdown {
-		font-family: var(--font-body);
-		background: var(--surface);
-		color: var(--fg);
-		border: var(--border-width) solid var(--border);
-		border-radius: var(--radius-control);
-		padding: var(--space-2) var(--space-3);
-		text-transform: capitalize;
-		cursor: pointer;
 	}
 </style>

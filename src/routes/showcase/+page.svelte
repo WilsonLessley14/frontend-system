@@ -1,22 +1,14 @@
 <script lang="ts">
+	import AppHeader from '../_dev/app-header.svelte';
 	import ModeControls from '../_dev/mode-controls.svelte';
-	import SiteNav from '../_dev/site-nav.svelte';
 	import Container from '$lib/design/components/layout/container.svelte';
 	import Stack from '$lib/design/components/layout/stack.svelte';
 	import Preview from '../_dev/preview.svelte';
 </script>
 
-<header class="bar">
-	<Container size="wide">
-		<div class="bar-inner">
-			<div class="left">
-				<strong class="brand">frontend-system</strong>
-				<SiteNav />
-			</div>
-			<ModeControls />
-		</div>
-	</Container>
-</header>
+<AppHeader>
+	<ModeControls />
+</AppHeader>
 
 <main>
 	<Container size="wide">
@@ -38,31 +30,6 @@
 </main>
 
 <style>
-	.bar {
-		position: sticky;
-		top: 0;
-		z-index: 10;
-		background: var(--surface-sunken);
-		border-bottom: var(--border-width) solid var(--border);
-		padding-block: var(--space-3);
-		backdrop-filter: blur(8px);
-	}
-	.bar-inner {
-		display: flex;
-		flex-wrap: wrap;
-		align-items: center;
-		justify-content: space-between;
-		gap: var(--space-4);
-	}
-	.left {
-		display: flex;
-		align-items: center;
-		gap: var(--space-5);
-	}
-	.brand {
-		font-family: var(--font-heading);
-		font-size: 1.1rem;
-	}
 	main {
 		padding-block: var(--space-8) var(--space-10);
 	}
