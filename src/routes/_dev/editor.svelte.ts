@@ -15,38 +15,68 @@ import {
 type CharMap = Record<string, TokenValue>;
 type ColorMap = Record<string, string>;
 
+// A theme's reset target + its kind. Committed themes ship with the package and
+// can't be removed; temporary themes are in-flight drafts. Same shape, distinct kind
+// → removeTheme guards on the type, not an ad-hoc flag.
+type CommittedTheme = { kind: 'committed'; base: ColorMap };
+type TemporaryTheme = { kind: 'temporary'; base: ColorMap };
+type ThemeEntry = CommittedTheme | TemporaryTheme;
+
 function seedChar(mode: Mode): CharMap {
 	const m: CharMap = {};
 	for (const t of characterTokens) m[t.name] = structuredClone(t.defaults[mode]);
 	return m;
 }
-function seedColorFrom(source: ColorMap | undefined): ColorMap {
+/** A fresh color map covering every role, copied from `source` (missing → black). */
+function cloneColors(source: ColorMap | undefined): ColorMap {
 	const m: ColorMap = {};
 	for (const r of colorRoles) m[r.name] = source?.[r.name] ?? '#000000';
 	return m;
 }
+function initialThemeSet(): Record<string, ThemeEntry> {
+	const out: Record<string, ThemeEntry> = {};
+	for (const name of initialThemeNames) out[name] = { kind: 'committed', base: cloneColors(themes[name]) };
+	return out;
+}
 function initialColor(): Record<string, ColorMap> {
 	const out: Record<string, ColorMap> = {};
-	for (const name of initialThemeNames) out[name] = seedColorFrom(themes[name]);
+	for (const name of initialThemeNames) out[name] = cloneColors(themes[name]);
 	return out;
 }
 
-/** Shared editor state. Character (per mode) and color (per named theme). */
+/** Shared editor state. Character (per mode) and color (working values per theme). */
 export const editor = $state({
 	character: { soft: seedChar('soft'), hard: seedChar('hard') },
 	themeNames: [...initialThemeNames] as string[],
+	themeSet: initialThemeSet(),
 	color: initialColor() as Record<string, ColorMap>
 });
 
 export const characterNames = characterTokens.map((t) => t.name);
 export const colorNames = colorRoles.map((r) => r.name);
 
-/** Draft a new theme (live only until exported + committed). Seeds from an existing theme. */
-export function addTheme(name: string, seedFrom?: string): boolean {
+export function isTemporary(name: string): boolean {
+	return editor.themeSet[name]?.kind === 'temporary';
+}
+
+/** Draft a new theme (live until exported + committed), seeded from an existing theme. */
+export function addTheme(name: string, copyFrom?: string): boolean {
 	const clean = name.trim();
 	if (!clean || editor.color[clean]) return false;
-	editor.color[clean] = seedColorFrom(seedFrom ? editor.color[seedFrom] : undefined);
+	const base = cloneColors(copyFrom ? editor.color[copyFrom] : undefined);
+	editor.themeSet[clean] = { kind: 'temporary', base };
+	editor.color[clean] = cloneColors(base);
 	editor.themeNames.push(clean);
+	return true;
+}
+
+/** Remove a draft. Committed themes are protected by the type guard. */
+export function removeTheme(name: string): boolean {
+	const entry = editor.themeSet[name];
+	if (!entry || entry.kind === 'committed') return false;
+	delete editor.themeSet[name];
+	delete editor.color[name];
+	editor.themeNames = editor.themeNames.filter((n) => n !== name);
 	return true;
 }
 
@@ -78,6 +108,7 @@ export function persist(): void {
 		JSON.stringify({
 			character: editor.character,
 			color: editor.color,
+			themeSet: editor.themeSet,
 			themeNames: editor.themeNames
 		})
 	);
@@ -89,8 +120,27 @@ export function hydrate(): void {
 	try {
 		const parsed = JSON.parse(raw);
 		if (parsed.character) Object.assign(editor.character, parsed.character);
+		// Restore only temporary (draft) entries; committed bases stay config-derived.
+		if (parsed.themeSet) {
+			for (const [name, entry] of Object.entries<ThemeEntry>(parsed.themeSet)) {
+				if (entry?.kind === 'temporary' && entry.base) editor.themeSet[name] = entry;
+			}
+		}
 		if (parsed.color) Object.assign(editor.color, parsed.color);
-		if (Array.isArray(parsed.themeNames)) editor.themeNames = parsed.themeNames;
+		if (Array.isArray(parsed.themeNames)) {
+			editor.themeNames = parsed.themeNames.filter((n: unknown) => typeof n === 'string');
+		}
+		// Reconcile: every listed theme needs a set entry + color map. Stray names from an
+		// older storage format become deletable drafts (so a broken theme can be removed).
+		for (const name of editor.themeNames) {
+			if (!editor.themeSet[name]) {
+				editor.themeSet[name] = { kind: 'temporary', base: cloneColors(editor.color[name]) };
+			}
+			if (!editor.color[name]) editor.color[name] = cloneColors(editor.themeSet[name].base);
+		}
+		for (const name of initialThemeNames) {
+			if (!editor.themeNames.includes(name)) editor.themeNames.push(name);
+		}
 	} catch {
 		// ignore malformed storage
 	}
@@ -117,5 +167,7 @@ export function resetCharacter(mode: Mode): void {
 }
 
 export function resetColor(theme: string): void {
-	editor.color[theme] = seedColorFrom(themes[theme]);
+	const entry = editor.themeSet[theme];
+	if (!entry) return;
+	editor.color[theme] = cloneColors(entry.base);
 }

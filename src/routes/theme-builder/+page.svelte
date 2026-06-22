@@ -18,6 +18,8 @@
 		exportTheme,
 		resetColor,
 		addTheme,
+		removeTheme,
+		isTemporary,
 		hydrate
 	} from '../_dev/editor.svelte';
 
@@ -30,6 +32,12 @@
 		if (addTheme(newName, theme)) {
 			ui.theme = newName.trim();
 			newName = '';
+		}
+	}
+
+	function deleteTheme() {
+		if (removeTheme(theme)) {
+			ui.theme = editor.themeNames[editor.themeNames.length - 1];
 		}
 	}
 
@@ -62,6 +70,9 @@
 			onkeydown={(e) => e.key === 'Enter' && createTheme()}
 		/>
 		<Button size="sm" variant="outline" onclick={createTheme}>+ New</Button>
+		{#if isTemporary(theme)}
+			<Button size="sm" variant="ghost" onclick={deleteTheme}>Delete</Button>
+		{/if}
 	</div>
 </AppHeader>
 
