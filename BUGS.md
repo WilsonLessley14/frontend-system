@@ -6,6 +6,31 @@ Newest first. Each entry: symptom → cause → fix → why.
 
 ---
 
+## `dark` theme rendered differently in `/theme-builder` vs other pages (hard mode)
+
+- **Found**: 2026-06-22, reported as "the dark theme has different values on theme-builder."
+- **Symptom**: in **hard mode + dark theme**, the border was light/white on `/showcase` and
+  `/playground` but the theme's dark `#262b33` on `/theme-builder`; surfaces appeared to
+  differ too. Same `data-mode`/`data-theme` should render identically everywhere.
+- **Cause**: a cross-axis override — `modes/hard.css` set `--border: var(--fg)` (a
+  "contrast border" feature) loaded after the theme files, so in hard mode the border
+  became the foreground color (light in dark theme). That applied on normal pages, but
+  `/theme-builder` previews edits by writing color roles as **inline** styles on `<html>`
+  (`el.style.setProperty('--border', …)`), and inline styles beat the `[data-mode='hard']`
+  stylesheet rule — so the builder showed the theme's real border, defeating the feature.
+  Net: one page disagreed with the others.
+- **Fix**: removed the hard-mode `--border` override. `--border` is now purely theme-driven
+  in every mode, so all pages (incl. the builder, whose inline value now equals the
+  committed value) render identically.
+- **Why (the principle)**: the two axes (character `data-mode`, color `data-theme`) must
+  stay **strictly orthogonal** — neither sets the other's tokens. A cross-axis override is
+  inherently fragile: anything that re-asserts the overridden token (here, the builder's
+  inline preview) silently diverges. Keep axes disjoint; if hard mode ever wants a
+  distinct border again, express it as a character token (e.g. width), not by hijacking a
+  color role.
+
+---
+
 ## SSR `ERR_UNSUPPORTED_DIR_IMPORT` when a consumer imports the package
 
 - **Found**: 2026-06-21, surfaced running the devlog dev server against `@wl/frontend-system@0.3.0`.

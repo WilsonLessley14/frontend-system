@@ -9,8 +9,4 @@
 	--border-width: 2px;
 	--transition: 80ms steps(2, end);
 	--letter-spacing: 0.01em;
-
-	/* Cross-axis: hard mode forces a high-contrast border (theme-aware via --fg),
-	   so it reads as a sharp outline in both light and dark. Loaded after themes. */
-	--border: var(--fg);
 }
