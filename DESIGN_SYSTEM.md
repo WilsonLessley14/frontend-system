@@ -178,7 +178,8 @@ src/
       editor-format.ts       # pure token → CSS serialization (testable core)
   routes/                    # the dev app (NOT published)
     showcase/ playground/ theme-builder/   # +page.svelte each
-    _dev/                    # dev-only: app-header, site-nav, mode-controls, preview,
+    _dev/                    # dev-only chrome: app-header, site-nav, mode-controls,
+                             #   editor-shell + export-panel (shared editor layout), preview,
                              #   mode.svelte (ui state), editor.svelte (editor state)
     +layout.svelte           # hydrates + applies the editor on every route
 components.json              # shadcn-svelte config

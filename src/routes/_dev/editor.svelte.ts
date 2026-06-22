@@ -52,9 +52,6 @@ export const editor = $state({
 	color: initialColor() as Record<string, ColorMap>
 });
 
-export const characterNames = characterTokens.map((t) => t.name);
-export const colorNames = colorRoles.map((r) => r.name);
-
 export function isTemporary(name: string): boolean {
 	return editor.themeSet[name]?.kind === 'temporary';
 }
@@ -107,11 +104,6 @@ export function applyColor(theme: string): void {
 	const map = editor.color[theme];
 	if (!map) return;
 	for (const r of colorRoles) el.style.setProperty(r.name, map[r.name]);
-}
-
-export function clearInline(names: string[]): void {
-	const el = document.documentElement;
-	for (const n of names) el.style.removeProperty(n);
 }
 
 const STORAGE_KEY = 'fs-editor';
