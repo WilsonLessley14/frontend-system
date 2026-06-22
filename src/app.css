@@ -3,3 +3,12 @@
 /* The whole design system (tokens + bridge + base) lives in the publishable
    stylesheet, so the dev app dogfoods exactly what consumers import. */
 @import './lib/styles.css';
+
+/* Showcase app only: hide scrollbars (scrolling still works). Kept out of the
+   shipped styles.css so consumers aren't forced into this. */
+* {
+	scrollbar-width: none; /* Firefox */
+}
+*::-webkit-scrollbar {
+	display: none; /* WebKit (Chrome/Safari/Edge) */
+}
