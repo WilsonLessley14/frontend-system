@@ -32,10 +32,10 @@ The system has **two orthogonal axes**, each implemented as a `data-*` attribute
 | Axis | Attribute | Values | Controls |
 |------|-----------|--------|----------|
 | **Character** | `data-mode` | `soft` \| `hard` | radius, shadow, font, border width, transition feel |
-| **Color** | `data-theme` | `light` \| `dark` | surface, foreground, accent, borders |
+| **Color** | `data-theme` | open named set (`light`, `dark`, `pink`, …) | surface, foreground, accent, borders |
 
-Because they are independent, they form a clean 2×2: `soft-light`, `soft-dark`,
-`hard-light`, `hard-dark`. Adding a third axis later (e.g. `density`) is the same
+Because they are independent, they compose freely: 2 character modes × N named color
+themes (`soft-light`, `hard-pink`, …). Adding a third axis later (e.g. `density`) is the same
 pattern — a new attribute that remaps semantic tokens.
 
 ### Worked example — soft vs hard
@@ -128,14 +128,17 @@ export const containers   = { narrow: 40, prose: 65, wide: 90 } as const; // rem
 Based on the **Every Layout** approach — components that respond to *available space*,
 reducing reliance on breakpoints. Breakpoints become the exception, not the rule.
 
+Built today:
+
 | Primitive | Responsibility |
 |-----------|----------------|
 | `Stack`     | Vertical rhythm; consistent gaps between stacked children |
 | `Cluster`   | Horizontal group that wraps as needed (toolbars, tag lists) |
-| `Switcher`  | Flips horizontal → vertical based on available width (no breakpoint) |
 | `Grid`      | Auto-fit grid with a `min` track size |
-| `Sidebar`   | Content + sidebar that collapses intrinsically |
 | `Container` | Max-width wrapper keyed to the `containers` scale |
+
+Future candidates (not yet built): `Switcher` (flip horizontal→vertical by available
+width) and `Sidebar` (content + intrinsically-collapsing sidebar).
 
 ```svelte
 <Stack gap="4">
@@ -148,30 +151,38 @@ reducing reliance on breakpoints. Breakpoints become the exception, not the rule
 
 ```
 src/
-  lib/
+  lib/                       # the published package (@wl/frontend-system)
+    index.ts                 # public API barrel
+    styles.css               # tokens + @theme bridge + @source (consumer entry)
+    utils.ts                 # cn() + element-ref types
+    components/
+      ui/                    # the shadcn-svelte suite (you own the source)
+        button/ card/ input/ select/ …
     design/
       tokens/
-        primitives.css      # tier 1 — raw scales, mode-agnostic
-        semantic.css        # tier 2 — role contract
+        primitives.css       # tier 1 — raw scales (--rad-*, --font-*-stack, ramps)
+        semantic.css         # tier 2 — the role contract (fallbacks)
         modes/
-          soft.css          # [data-mode="soft"]
-          hard.css          # [data-mode="hard"]
+          soft.css hard.css          # [data-mode]
         themes/
-          light.css         # [data-theme="light"]
-          dark.css          # [data-theme="dark"]
+          light.css dark.css pink.css  # [data-theme] — the named set
       config/
-        modes.ts            # typed manifest of axes/tokens — drives playground UI
-        layout.ts           # breakpoints + container scale
+        tokens.ts            # characterTokens + colorRoles + the themes registry
+        modes.ts             # axes manifest (data-mode / data-theme)
+        layout.ts            # breakpoints + container scale
       components/
-        ui/                 # shadcn-svelte components copied here (you own source)
-          button/ card/ input/ …
-        layout/             # the layout primitives above
-          stack.svelte cluster.svelte switcher.svelte
-          grid.svelte sidebar.svelte container.svelte
-  routes/
-    showcase/+page.svelte   # toggle-driven catalog (see §7)
-    playground/+page.svelte # live token editor (see §8)
-components.json             # shadcn-svelte config
+        layout/              # layout primitives
+          stack.svelte cluster.svelte grid.svelte container.svelte
+        typography/
+          text.svelte        # the Text component
+      editor-format.ts       # pure token → CSS serialization (testable core)
+  routes/                    # the dev app (NOT published)
+    showcase/ playground/ theme-builder/   # +page.svelte each
+    _dev/                    # dev-only: app-header, site-nav, mode-controls, preview,
+                             #   mode.svelte (ui state), editor.svelte (editor state)
+    +layout.svelte           # hydrates + applies the editor on every route
+components.json              # shadcn-svelte config
+flake.nix                    # devShell, package tarball, consumer template
 ```
 
 ## 7. Showcase contract
@@ -179,11 +190,11 @@ components.json             # shadcn-svelte config
 Purpose: see the *cohesive* design under one active mode at a time — because modes
 never sit next to each other in real use.
 
-- Renders the **full component catalog** under the **single currently-active mode**.
-- **Toggles** at the top switch `data-mode` (soft/hard) and `data-theme` (light/dark)
-  globally; the whole catalog re-renders in the chosen combination.
-- A separate **Compare** view (opt-in) renders the 2×2 grid side-by-side for spot-checking
-  a single component for drift — not the default, used only when hunting inconsistency.
+- Renders the **full component catalog** under the **single currently-active combination**.
+- Header **dropdowns** (`<ModeControls>`) switch `data-mode` (soft/hard) and `data-theme`
+  (the named theme set) globally; the whole catalog re-renders in the chosen combination.
+- *Future idea (not built):* a side-by-side **Compare** view for spotting drift across
+  combinations at a glance.
 
 ## 8. Editor routes — `/playground` & `/theme-builder`
 
@@ -197,13 +208,16 @@ same catalog `/showcase` uses) beside a control panel, write overrides live to
 | `/playground` | Character (feel) | `--radius`, `--shadow*`, `--font-*`, `--border-width`, `--transition`, `--letter-spacing` | `characterTokens` in `config/tokens.ts` | `modes/soft.css`, `modes/hard.css` |
 | `/theme-builder` | Color (look) | the semantic color roles of any named theme | `colorRoles` + `themes` in `config/tokens.ts` | `themes/<name>.css` |
 
-- **Named theme set**: the color axis is an **open set** of named themes (`themes` in
-  `config/tokens.ts`; `themeNames` drives the `data-theme` axis values). `/theme-builder`
-  lets you edit any existing theme **or draft a new named one** (seeded from the current
-  theme). Drafts are live-only until exported and committed.
-- **Axis selection**: `/playground` uses `<ModeControls>` (Character toggle picks the mode
-  you edit). `/theme-builder` has its own theme `<select>` + "New" creator, plus a
-  soft/hard button to preview character.
+- **Named theme set**: the color axis is an **open set** of named themes, modelled as a
+  discriminated union in the editor — `themeSet: Record<name, CommittedTheme | TemporaryTheme>`
+  (same shape, distinct `kind`; each carries its reset `base`). `themeNames` drives the
+  `data-theme` axis. `/theme-builder` edits any theme **or drafts a new one** ("+ New",
+  seeded from the current theme); drafts (`kind: 'temporary'`) can be **Deleted**, committed
+  themes can't (the type guard in `removeTheme` rejects them). Drafts are live-only until
+  exported and committed.
+- **Axis selection**: both editors use the shared `<ModeControls>` in a shared `<AppHeader>`,
+  rendering Character and Color as matching dropdowns (`Select`). `/theme-builder` adds a
+  new-theme `Input` + "New" / "Delete".
 - **Manifest-driven**: controls are generated from the typed manifests in
   `config/tokens.ts`, so adding a token/role surfaces a new control automatically.
 
@@ -217,11 +231,15 @@ The set is intentionally explicit — a draft from the builder becomes a real th
 
 That's it — `themeNames` (and thus the `data-theme` axis + every consumer of `styles.css`)
 picks it up automatically. `light`, `dark`, and `pink` ship this way.
-- **Live apply is route-scoped**: overrides are written to `<html>` while you're on the
-  editor and cleared on navigate away, so `/showcase` always reflects committed CSS. The
-  edits themselves persist in `localStorage`.
+- **Centralized live apply**: the root `+layout.svelte` hydrates the editor once and
+  inline-applies the active `mode × theme` to `<html>` on **every** route (and persists to
+  `localStorage`). So the editor is the single live source of truth — every tab (incl.
+  `/showcase`) reflects the current editor state, which is what lets a *draft* theme (no
+  committed CSS rule) render anywhere it's selected. Unexported edits therefore show on all
+  tabs; **Reset** restores a theme to its `base`. (This is dev-app behavior only —
+  consumers like devlog render straight from the committed `[data-*]` CSS, untouched.)
 - **Pure core / thin shell**: serialization lives in `editor-format.ts` (pure, testable);
-  DOM/storage/export wiring in `editor.svelte.ts`.
+  DOM/storage/export/theme-set wiring in `editor.svelte.ts`.
 
 ### Export workflow (full-file)
 

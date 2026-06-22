@@ -6,6 +6,37 @@ Newest first. Each entry: symptom → cause → fix → why.
 
 ---
 
+## Draft themes rendered as `light` on every tab except `/theme-builder`
+
+- **Found**: 2026-06-22.
+- **Symptom**: a draft theme (e.g. "Random" copied from pink) looked right in
+  `/theme-builder` but rendered like `light` on `/showcase` and `/playground`.
+- **Cause**: only the editor routes inline-applied the editor's colors; the other tabs
+  relied on the committed `[data-theme='X']` CSS. A draft has **no committed CSS rule**, so
+  `data-theme="Random"` matched nothing and fell back to the `:root` (light) defaults.
+- **Fix**: centralized application in the root `+layout.svelte` — hydrate the editor once
+  and inline-apply the active `mode × theme` on every route. The editor is now the single
+  live source of truth, so drafts (and unexported edits) render identically everywhere.
+- **Why**: a draft only *exists* as editor state; if rendering depends on committed CSS,
+  the editor state must be applied wherever the draft is selected — one place, the layout,
+  not per-route.
+
+## Resetting a draft theme turned every color black
+
+- **Found**: 2026-06-22.
+- **Symptom**: create a draft theme, click **Reset** → all roles become `#000000`, whole
+  screen black; persisted across refresh.
+- **Cause**: `resetColor(name)` reseeded from the committed `themes` registry
+  (`seedColorFrom(themes[name])`). Drafts aren't in that registry → `undefined` → every role
+  fell back to the `'#000000'` default.
+- **Fix**: the editor now models themes as a discriminated set
+  (`themeSet: Record<name, CommittedTheme | TemporaryTheme>`), each entry carrying its reset
+  `base`. `resetColor` restores from `themeSet[name].base` — a draft's base is the snapshot
+  it was copied from, so reset is always valid. Added `removeTheme` (type-guards on `kind`)
+  so drafts can be deleted.
+- **Why**: a draft needs its own stored reset target; deriving "reset" from a
+  committed-only registry can't represent themes that aren't committed yet.
+
 ## `dark` theme rendered differently in `/theme-builder` vs other pages (hard mode)
 
 - **Found**: 2026-06-22, reported as "the dark theme has different values on theme-builder."

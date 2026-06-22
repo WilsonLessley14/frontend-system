@@ -10,22 +10,22 @@ a serif voice. Flip either axis on `<html>` and every component re-skins — no 
 code, because all customization flows through design tokens.
 
 ```
-data-mode  = soft | hard      ← character (radius, shadow, font, border, motion)
-data-theme = light | dark     ← color   (surface, fg, accent, border, danger)
+data-mode  = soft | hard            ← character (radius, shadow, font, border, motion)
+data-theme = light | dark | pink…   ← color   (surface, fg, accent, border, danger)
 ```
 
-A `<Button>` only ever references semantic tokens (`var(--radius)`, `var(--accent)`), so the
-2×2 of `{soft,hard} × {light,dark}` falls out of attribute changes alone.
+`data-theme` is an **open, named set** — `light`/`dark`/`pink` ship today and more can be
+added. A `<Button>` only ever references semantic tokens (`var(--radius)`, `var(--accent)`),
+so every `mode × theme` combination falls out of attribute changes alone.
 
 ## Highlights
 
-- **Two-axis token system** — soft/hard character × light/dark color, fully orthogonal.
+- **Two-axis token system** — soft/hard character × an open named color theme set, fully orthogonal.
 - **The full shadcn-svelte suite**, conformed to the tokens via a single `@theme` bridge —
   components inherit both axes with zero edits.
-- **Layout primitives** (`Stack`, `Cluster`, `Grid`, `Container`) for intrinsic-responsive
-  layout without scattered breakpoints.
-- **Live editors** — `/playground` (tune the character tokens) and `/theme-builder` (pick
-  color roles), both exporting committable CSS.
+- **Layout primitives** (`Stack`, `Cluster`, `Grid`, `Container`) + a token-driven `Text`.
+- **Live editors** — `/playground` (tune the character tokens) and `/theme-builder` (edit
+  any theme or draft/delete new named ones), both exporting committable CSS.
 - **Distributable** — installable as `@wl/frontend-system`, pinned and delivered via a Nix
   flake; consumers theme entirely through tokens.
 
@@ -41,7 +41,7 @@ npm run dev        # → http://localhost:5173
 |-------|------------|
 | `/showcase` | The full component catalog under one active mode; toggle character/color at the top |
 | `/playground` | Live-edit the soft/hard character tokens; export `modes/*.css` |
-| `/theme-builder` | Live-edit the color roles per light/dark; export `themes/*.css` |
+| `/theme-builder` | Edit any theme's color roles, or draft/delete new named themes; export `themes/<name>.css` |
 
 Common scripts:
 
