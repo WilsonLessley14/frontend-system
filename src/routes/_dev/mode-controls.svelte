@@ -7,18 +7,27 @@
 	{#each Object.entries(axes) as [name, axis] (name)}
 		<div class="group">
 			<span class="label">{axis.label}</span>
-			<div class="seg" role="group" aria-label={axis.label}>
-				{#each axis.values as value (value)}
-					<button
-						class="opt"
-						data-active={ui[name] === value}
-						aria-pressed={ui[name] === value}
-						onclick={() => (ui[name] = value)}
-					>
-						{value}
-					</button>
-				{/each}
-			</div>
+			{#if axis.values.length > 2}
+				<!-- many values (e.g. the theme set) → dropdown -->
+				<select class="dropdown" aria-label={axis.label} bind:value={ui[name]}>
+					{#each axis.values as value (value)}
+						<option {value}>{value}</option>
+					{/each}
+				</select>
+			{:else}
+				<div class="seg" role="group" aria-label={axis.label}>
+					{#each axis.values as value (value)}
+						<button
+							class="opt"
+							data-active={ui[name] === value}
+							aria-pressed={ui[name] === value}
+							onclick={() => (ui[name] = value)}
+						>
+							{value}
+						</button>
+					{/each}
+				</div>
+			{/if}
 		</div>
 	{/each}
 </div>
@@ -59,5 +68,15 @@
 	.opt[data-active='true'] {
 		background: var(--accent);
 		color: var(--accent-fg);
+	}
+	.dropdown {
+		font-family: var(--font-body);
+		background: var(--surface);
+		color: var(--fg);
+		border: var(--border-width) solid var(--border);
+		border-radius: var(--radius-control);
+		padding: var(--space-2) var(--space-3);
+		text-transform: capitalize;
+		cursor: pointer;
 	}
 </style>

@@ -24,6 +24,7 @@ npm install "$FRONTEND_SYSTEM_TGZ"          # reinstall the new tarball
 |------|--------|
 | `src/app.css` | `@import 'tailwindcss';` then `@import '@wl/frontend-system/styles.css';` |
 | `src/app.html` | `data-mode` / `data-theme` on `<html>` |
+| `vite.config.ts` | `ssr: { noExternal: ['@wl/frontend-system'] }` (required for SSR — see the design system's BUGS.md) |
 | `src/routes/+page.svelte` | `import { Button, Card, Stack } from '@wl/frontend-system'` |
 | `package.json` | peer deps (`bits-ui`, `tailwind-variants`, `clsx`, `tailwind-merge`, `@lucide/svelte`, `tw-animate-css`) |
 

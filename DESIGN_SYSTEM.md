@@ -344,6 +344,8 @@ checked by `publint`.
    (the package ships `@source` so Tailwind scans its components).
 3. Set `data-mode` / `data-theme` on `<html>`.
 4. `import { Button } from '@wl/frontend-system';`
+5. In `vite.config.ts`, add `ssr: { noExternal: ['@wl/frontend-system'] }` so SSR
+   processes the package's `.svelte` source instead of externalizing it (see BUGS.md).
 
 **Nix (`flake.nix`).** The flake exposes:
 - `devShells.default` — pinned Node 22.
