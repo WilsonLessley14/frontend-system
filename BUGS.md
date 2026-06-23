@@ -6,6 +6,29 @@ Newest first. Each entry: symptom → cause → fix → why.
 
 ---
 
+## A newly-committed theme stays shadowed by a same-named draft in localStorage
+
+- **Found**: 2026-06-23.
+- **Status**: **deferred** (known, not yet fixed — see "Intended fix").
+- **Symptom**: draft a theme in `/theme-builder` (e.g. "Aleksa"), then commit it the
+  normal way (add to the `themes` registry, create `tokens/themes/<name>.css`, `@import`
+  it in `styles.css`). It still renders as the *old draft* on every page. Deleting the
+  draft in `/theme-builder` and reloading makes it finally render as the committed theme.
+- **Cause**: `hydrate()` in `editor.svelte.ts` restores persisted **temporary** entries
+  and `Object.assign`s the persisted `color` map over the config-derived committed values.
+  A draft named `X` is `kind: 'temporary'` in `localStorage`, so on load it overwrites the
+  freshly-committed `themeSet[X]` / `color[X]`. The root `+layout.svelte` then inline-applies
+  `editor.color[X]` to `<html>`, and inline styles beat the committed `[data-theme='X']`
+  stylesheet rule — so the stale draft wins until it's removed from storage (or storage is
+  cleared).
+- **Intended fix (deferred)**: in `hydrate()`, skip restoring a temporary entry whose name
+  is now in the committed set (`initialThemeNames` / `themes`) — i.e. prefer a committed
+  theme over a stale same-named draft. Best paired with a real "save/promote a theme" flow
+  if/when one exists (today themes are committed by hand: export → code change + release).
+- **Why deferred**: the collision only happens in the brief window where a draft and a
+  newly-committed theme share a name, and deleting the draft resolves it immediately. Low
+  impact under the current manual flow; revisit when theme-saving is automated.
+
 ## Draft themes rendered as `light` on every tab except `/theme-builder`
 
 - **Found**: 2026-06-22.
