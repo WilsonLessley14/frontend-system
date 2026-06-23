@@ -34,7 +34,8 @@ export type ColorTheme = Record<string, string>;
 export const FONT_PRESETS: { label: string; value: string }[] = [
 	{ label: 'Sans', value: 'ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif' },
 	{ label: 'Serif', value: 'Georgia, "Times New Roman", "Iowan Old Style", serif' },
-	{ label: 'Mono', value: 'ui-monospace, "SFMono-Regular", Menlo, monospace' }
+	{ label: 'Mono', value: 'ui-monospace, "SFMono-Regular", Menlo, monospace' },
+	{ label: 'Helvetica', value: '"Helvetica Neue", Helvetica, Arial, sans-serif' }
 ];
 
 export const EASING_PRESETS = [
@@ -192,6 +193,18 @@ export const themes: Record<string, ColorTheme> = {
 		'--accent-fg': '#ffffff',
 		'--danger': '#de4a85',
 		'--danger-fg': '#be55b0'
+	},
+	Aleksa: {
+		'--surface': '#b120ac',
+		'--surface-raised': '#c28bf1',
+		'--surface-sunken': '#328b5d',
+		'--fg': '#4d0d01',
+		'--fg-muted': '#1b0c72',
+		'--border': '#a87d3e',
+		'--accent': '#6c470f',
+		'--accent-fg': '#cab9cb',
+		'--danger': '#d78528',
+		'--danger-fg': '#e0da1f'
 	}
 };
 
