@@ -59,11 +59,15 @@ export { breakpoints, containers, type Breakpoint, type Container as ContainerSi
 export {
 	characterTokens,
 	colorRoles,
+	themes,
+	themeNames,
 	FONT_PRESETS,
 	EASING_PRESETS,
 	type CharacterTokenDef,
 	type ColorRoleDef,
+	type ColorTheme,
 	type Mode,
+	type ThemeName,
 	type Theme
 } from './design/config/tokens';
 export {
