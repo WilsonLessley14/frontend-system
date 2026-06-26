@@ -55,7 +55,7 @@ export { cn, type WithElementRef, type WithoutChild, type WithoutChildren, type 
 
 // ── Token config & theme-authoring helpers ───────────────────────────────────
 export { axes, type Axis, type AxisName } from './design/config/modes';
-export { breakpoints, containers, type Breakpoint, type Container as ContainerSize } from './design/config/layout';
+export { breakpoints, containers, type Breakpoint, type ContainerSize } from './design/config/layout';
 export {
 	characterTokens,
 	colorRoles,

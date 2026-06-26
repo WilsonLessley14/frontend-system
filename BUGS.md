@@ -6,6 +6,30 @@ Newest first. Each entry: symptom → cause → fix → why.
 
 ---
 
+## `Container` unusable from the barrel under `verbatimModuleSyntax`
+
+- **Found**: 2026-06-26, scaffolding the receipt-ui consumer (`svelte-check` caught it).
+- **Symptom**: in a consumer with `verbatimModuleSyntax` on (SvelteKit's default tsconfig),
+  `import { Container } from '@wl/frontend-system'` + `<Container size="narrow">` failed type
+  check with *"'Container' resolves to a type-only declaration and must be imported using a
+  type-only import"* and *"Type 'string' has no properties in common with type
+  '{ $on?…; $set?… }'"*. Every other component (`Stack`, `Text`, …) imported fine.
+- **Cause**: a name collision in the public barrel (`src/lib/index.ts`). It exported both the
+  **component** (`export { default as Container } from '…/container.svelte'`) and, from
+  `config/layout`, the **type** `Container` aliased on export
+  (`export { …, type Container as ContainerSize }`). Resolving the re-export pulled a
+  type-only symbol named `Container` into the module, which merged with the component export
+  and made the whole `Container` binding resolve as type-only under `verbatimModuleSyntax`.
+  Only `Container` was affected because only it shared a name with a re-exported type.
+- **Fix**: renamed the type at its source — `config/layout.ts` `Container` → `ContainerSize`
+  (and its use in `container.svelte`), so the barrel re-export is now plain
+  `type ContainerSize` with no aliasing and no name shared with the component. The component
+  `Container` is the sole `Container` export; the public type name `ContainerSize` is
+  unchanged, so this is **not** a breaking change for consumers. Shipped in v0.3.4.
+- **Why**: a value export and a same-named type export in one barrel are ambiguous under
+  `verbatimModuleSyntax`. Keep component names and exported type names disjoint — don't alias
+  a type *to* a name, rename it *at the source* so the collision can't form.
+
 ## A newly-committed theme stays shadowed by a same-named draft in localStorage
 
 - **Found**: 2026-06-23.

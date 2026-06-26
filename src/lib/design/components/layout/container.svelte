@@ -1,8 +1,8 @@
 <script lang="ts">
 	import type { Snippet } from 'svelte';
-	import { containers, type Container } from '../../../design/config/layout';
+	import { containers, type ContainerSize } from '../../../design/config/layout';
 
-	type Props = { size?: Container; children?: Snippet };
+	type Props = { size?: ContainerSize; children?: Snippet };
 	let { size = 'wide', children }: Props = $props();
 </script>
 

@@ -1,6 +1,6 @@
 {
 	"name": "@wl/frontend-system",
-	"version": "0.3.3",
+	"version": "0.3.4",
 	"private": true,
 	"type": "module",
 	"description": "A soft/hard × light/dark token-driven Svelte design system on shadcn-svelte.",

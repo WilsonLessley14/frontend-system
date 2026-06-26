@@ -18,4 +18,4 @@ export const containers = {
 } as const;
 
 export type Breakpoint = keyof typeof breakpoints;
-export type Container = keyof typeof containers;
+export type ContainerSize = keyof typeof containers;
